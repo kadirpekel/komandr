@@ -2,8 +2,7 @@
 komandr
 =======
 
-komandr is a cool command-line framework which converts your ordinary functions
-into cool command line interfaces.
+Convert your ordinary functions into cool command-line interfaces.
 
 Example
 -------
