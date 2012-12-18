@@ -32,7 +32,6 @@ class prog(object):
         self.parser.add_argument('-v', '--version', action='version',
                                  version=version)
         self.subparsers = self.parser.add_subparsers()
-        self.commands = list()
 
     def command(self, f):
         """Convenient decorator function which simply registers a function into
@@ -42,8 +41,7 @@ class prog(object):
         :param type: function
 
         """
-        self.commands.append(f)
-        return f
+        return self._generate_command_parser(f)
 
     def _generate_command_parser(self, command):
         """Generates a sub parser for given command.
@@ -64,6 +62,7 @@ class prog(object):
             arg.required = v is None
             arg.default = v
         subparser.set_defaults(**{self._COMMAND_FLAG: command})
+        return command
 
     def execute(self, arg_list):
         """Main function to parse and dispatch commands by given arg_list after
@@ -73,8 +72,6 @@ class prog(object):
         :param type: list
 
         """
-        for command in self.commands:
-            self._generate_command_parser(command)
         arg_map = self.parser.parse_args(arg_list).__dict__
         command = arg_map.pop(self._COMMAND_FLAG)
         return command(**arg_map)
