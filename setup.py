@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='komandr',
     py_modules=['komandr'],
-    version='0.0.4',
+    version='0.0.5',
     description='smart command-line interface',
     author='Kadir Pekel',
     author_email='kadirpekel@gmail.com',
