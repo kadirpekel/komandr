@@ -33,25 +33,25 @@ class prog(object):
                                  version=version)
         self.subparsers = self.parser.add_subparsers()
 
-    def command(self, f):
+    def command(self, func):
         """Convenient decorator function which simply registers a function into
         command registry.
 
-        :param f: command function
+        :param func: command function
         :param type: function
 
         """
-        return self._generate_command_parser(f)
+        return self._generate_command(func)
 
-    def _generate_command_parser(self, command):
-        """Generates a sub parser for given command.
+    def _generate_command(self, func):
+        """Generates a command parser for given func.
 
-        :param command: command to generate related parser
+        :param func: func to generate related command parser
         :param type: function
 
         """
-        subparser = self.subparsers.add_parser(command.__name__)
-        spec = inspect.getargspec(command)
+        subparser = self.subparsers.add_parser(func.__name__)
+        spec = inspect.getargspec(func)
         opts = reversed(list(izip_longest(reversed(spec.args or []),
                                           reversed(spec.defaults or []),
                                           fillvalue=self._POSITIONAL())))
@@ -61,8 +61,8 @@ class prog(object):
             arg = subparser.add_argument(arg_name)
             arg.required = v is None
             arg.default = v
-        subparser.set_defaults(**{self._COMMAND_FLAG: command})
-        return command
+        subparser.set_defaults(**{self._COMMAND_FLAG: func})
+        return func
 
     def execute(self, arg_list):
         """Main function to parse and dispatch commands by given arg_list after
