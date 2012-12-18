@@ -26,6 +26,25 @@ Run your small program just typing::
     $ python example.py foo 1 --baz 2
     foo 1 2
 
+Show help::
+
+    $ python example.py --help
+    usage: example.py [-h] [-v] {foo} ...
+
+    positional arguments:
+      {foo}
+
+    optional arguments:
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
+
+Run command without mandatory args::
+
+    $ python example.py foo
+    usage: example.py foo [-h] --baz BAZ bar
+    example.py foo: error: too few arguments
+
+
 Cool, eh?
 
 Status
