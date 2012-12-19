@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Simple module helps you create command-line interfaces using you ordinary
-functions using :py:module:``argparse`` in backyard.
+"""Simple module helps you convert your oridnary functions into cool command-line interfaces
+using :py:module:``argparse`` in backyard.
 
 """
 import sys
