@@ -2,9 +2,9 @@ import unittest
 import komandr
 
 
-class TestRouterm(unittest.TestCase):
+class TestKomandr(unittest.TestCase):
 
-    def testRoute(self):
+    def testCommand(self):
         def foo(bar, baz=None):
             return bar, baz
         komandr.command(foo)
