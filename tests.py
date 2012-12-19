@@ -1,3 +1,4 @@
+# TODO: Add much more tests
 import unittest
 import komandr
 

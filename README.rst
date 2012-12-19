@@ -2,7 +2,11 @@
 komandr
 =======
 
-Convert your ordinary functions into cool command-line interfaces.
+Convert your ordinary functions into cool command-line interfaces!
+
+Komandr is a smart thin wrapper around powerful `argparse` module lets you
+build defacto standart command-line interfaces in secondz while providing you
+all the flexibity.
 
 Example
 -------
@@ -10,16 +14,19 @@ Example
 
     # example.py
 
-    from komandr import main, command
+    from komandr import *
 
 
+    # straigforward ad-hoc usage
     @command
     def foo(bar, baz=None):
         print 'foo', bar, baz
 
 
+    # but also it allows you much more tuning
     @command(name='cool_command_name')
-    def lame_command_name(foo, bar, baz):
+    @arg('baz', '-z', required=True, type=int)
+    def lame_command_name(foo, bar, baz=1):
         print 'lame_command_name', foo, bar, baz
 
     if __name__ == '__main__':
@@ -63,10 +70,13 @@ That's ok now::
 
 Cool, eh?
 
-Status
-------
+This also shows how flexible and configurable it is::
 
-Currently remains as a draft proposal, please stay tuned...
+    $ python example.py cool_command_name Hello -z 'Non numeric' World
+    usage: example.py cool_command_name [-h] --baz BAZ foo bar
+    example.py cool_command_name: error: argument --baz/-z: invalid int value: 'Non Numeric'
+
+Enjoy!
 
 Licence
 -------

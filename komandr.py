@@ -6,6 +6,7 @@ command-line interfaces using :py:module:``argparse`` in backyard.
 import sys
 import inspect
 import argparse
+from functools import wraps
 from itertools import izip_longest
 
 
@@ -45,6 +46,22 @@ class prog(object):
                 return self._generate_command(func, *args, **kwargs)
             return _command
 
+    def arg(self, arg_name, *args, **kwargs):
+        """Convenient decorator function which simply configures any arg by
+        given arg_name with supplied args and kwargs passing them transparently
+        to :py:func:``argparse.ArgumentParser.add_argument`` interface
+
+        :param arg_name: arg name to configure
+        :param type: str
+
+        """
+        def wrapper(func):
+            if not getattr(func, 'argopts', None):
+                func.argopts = {}
+            func.argopts[arg_name] = (args, kwargs)
+            return func
+        return wrapper
+
     def _generate_command(self, func, name=None):
         """Generates a command parser for given func.
 
@@ -58,11 +75,17 @@ class prog(object):
                                           reversed(spec.defaults or []),
                                           fillvalue=self._POSITIONAL())))
         for k, v in opts:
+            argopts = getattr(func, 'argopts', {})
+            args, kwargs = argopts.get(k, ([], {}))
+            args = list(args)
             is_positional = isinstance(v, self._POSITIONAL)
-            arg_name = k if is_positional else '--%s' % k
-            arg = subparser.add_argument(arg_name)
-            arg.required = v is None
-            arg.default = v
+            if is_positional:
+                args = filter(
+                    lambda x: not x.startswith('-'), args) or [k]
+            else:
+                kwargs.setdefault('default', v)
+                args.insert(0, '--%s' % k)
+            arg = subparser.add_argument(*args, **kwargs)
         subparser.set_defaults(**{self._COMMAND_FLAG: func})
         return func
 
@@ -86,5 +109,6 @@ class prog(object):
         self.execute(sys.argv[1:])
 
 main = prog()
+arg = main.arg
 command = main.command
 execute = main.execute
