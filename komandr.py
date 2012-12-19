@@ -79,12 +79,16 @@ class prog(object):
             args, kwargs = argopts.get(k, ([], {}))
             args = list(args)
             is_positional = isinstance(v, self._POSITIONAL)
+            options = [arg for arg in args if arg.startswith('-')]
             if is_positional:
-                args = filter(
-                    lambda x: not x.startswith('-'), args) or [k]
+                if options:
+                    args = options
+                    kwargs.update({'required': True, 'dest': k})
+                else:
+                    args = [k]
             else:
-                kwargs.setdefault('default', v)
-                args.insert(0, '--%s' % k)
+                args = options or ['--%s' % k]
+                kwargs.update({'default': v, 'dest': k})
             arg = subparser.add_argument(*args, **kwargs)
         subparser.set_defaults(**{self._COMMAND_FLAG: func})
         return func
