@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name='komandr',
     py_modules=['komandr'],
-    version='0.0.5',
-    description='smart command-line interface',
+    version='0.0.6',
+    description='Coolest command-line interface on this planet',
     author='Kadir Pekel',
     author_email='kadirpekel@gmail.com',
     url='https://github.com/kadirpekel/komandr'

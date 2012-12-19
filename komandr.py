@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Simple module helps you convert your oridnary functions into cool command-line interfaces
-using :py:module:``argparse`` in backyard.
+"""Simple module helps you convert your oridnary functions into cool
+command-line interfaces using :py:module:``argparse`` in backyard.
 
 """
 import sys
@@ -33,24 +33,26 @@ class prog(object):
                                  version=version)
         self.subparsers = self.parser.add_subparsers()
 
-    def command(self, func):
+    def command(self, *args, **kwargs):
         """Convenient decorator function which simply registers a function into
         command registry.
 
-        :param func: command function
-        :param type: function
-
         """
-        return self._generate_command(func)
+        if len(args) == 1 and callable(args[0]):
+            return self._generate_command(args[0])
+        else:
+            def _command(func):
+                return self._generate_command(func, *args, **kwargs)
+            return _command
 
-    def _generate_command(self, func):
+    def _generate_command(self, func, name=None):
         """Generates a command parser for given func.
 
         :param func: func to generate related command parser
         :param type: function
 
         """
-        subparser = self.subparsers.add_parser(func.__name__)
+        subparser = self.subparsers.add_parser(name or func.__name__)
         spec = inspect.getargspec(func)
         opts = reversed(list(izip_longest(reversed(spec.args or []),
                                           reversed(spec.defaults or []),

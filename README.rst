@@ -17,32 +17,49 @@ Example
     def foo(bar, baz=None):
         print 'foo', bar, baz
 
+
+    @command(name='cool_command_name')
+    def lame_command_name(foo, bar, baz):
+        print 'lame_command_name', foo, bar, baz
+
     if __name__ == '__main__':
         main()
 
-Run your small program just typing::
 
-    $ python example.py foo 1 --baz 2
-    foo 1 2
-
-Show help::
+Need some help?::
 
     $ python example.py --help
-    usage: example.py [-h] [-v] {foo} ...
+    usage: example.py [-h] [-v] {foo,cool_command_name} ...
 
     positional arguments:
-      {foo}
+      {foo,cool_command_name}
 
     optional arguments:
-      -h, --help     show this help message and exit
-      -v, --version  show program's version number and exit
+      -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
-Run command without mandatory args::
+Let's investigate more about `foo`::
 
-    $ python example.py foo
+    $ python example.py foo --help
     usage: example.py foo [-h] --baz BAZ bar
-    example.py foo: error: too few arguments
 
+    positional arguments:
+      bar
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      --baz BAZ
+
+Test `foo` command::
+
+    $ python example.py foo Hello
+    usage: example.py foo [-h] --baz BAZ bar
+    example.py foo: error: argument --baz is required
+
+That's ok now::
+
+    $ python example.py foo Hello --baz World
+    foo Hello World
 
 Cool, eh?
 
