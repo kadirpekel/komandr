@@ -76,6 +76,11 @@ This also shows how flexible and configurable it is::
     usage: example.py cool_command_name [-h] --baz BAZ foo bar
     example.py cool_command_name: error: argument --baz/-z: invalid int value: 'Non Numeric'
 
+Correct one should be::
+
+    $ python example.py cool_command_name Hello -z 2013 World
+    lame_command_name Hello World 2013
+
 Enjoy!
 
 Licence
