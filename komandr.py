@@ -11,10 +11,8 @@ from itertools import izip_longest
 
 
 class prog(object):
-    """Class to hold an isolated command registry and execution blocks to keep
-    them within the same namespace.
+    """Class to hold an isolated command namespace"""
 
-    """
     _COMMAND_FLAG = '_command'
     _POSITIONAL = type('_positional', (object,), {})
 
@@ -35,10 +33,7 @@ class prog(object):
         self.subparsers = self.parser.add_subparsers()
 
     def command(self, *args, **kwargs):
-        """Convenient decorator function which simply registers a function into
-        command registry.
-
-        """
+        """Convenient decorator simply creates corresponding command"""
         if len(args) == 1 and callable(args[0]):
             return self._generate_command(args[0])
         else:
@@ -47,9 +42,9 @@ class prog(object):
             return _command
 
     def arg(self, arg_name, *args, **kwargs):
-        """Convenient decorator function which simply configures any arg by
-        given arg_name with supplied args and kwargs passing them transparently
-        to :py:func:``argparse.ArgumentParser.add_argument`` interface
+        """Decorator function configures any arg by given ``arg_name`` with
+        supplied ``args`` and ``kwargs`` passing them transparently to
+        :py:func:``argparse.ArgumentParser.add_argument`` function
 
         :param arg_name: arg name to configure
         :param type: str
@@ -94,8 +89,7 @@ class prog(object):
         return func
 
     def execute(self, arg_list):
-        """Main function to parse and dispatch commands by given arg_list after
-        generating corresponding parser for each one.
+        """Main function to parse and dispatch commands by given ``arg_list``
 
         :param arg_list: all arguments provided by the command line
         :param type: list
@@ -107,7 +101,7 @@ class prog(object):
 
     def __call__(self):
         """Calls :py:func:``execute`` with :py:class:``sys.argv`` excluding
-        executing script name arg which comes as first one.
+        script name which comes first.
 
         """
         self.execute(sys.argv[1:])
