@@ -4,7 +4,7 @@ komandr
 
 Convert your ordinary functions into cool command-line interfaces!
 
-Komandr is a smart thin wrapper around powerful `argparse` module lets you
+Komandr is a smart thin wrapper around powerful ``argparse`` module lets you
 build defacto standart command-line interfaces in secondz while providing you
 all the flexibity.
 
@@ -12,40 +12,28 @@ Example
 -------
 ::
 
-    # example.py
-
     from komandr import *
 
-
-    # straigforward ad-hoc usage
     @command
     def foo(bar, baz=None):
         print 'foo', bar, baz
 
-
-    # but also it allows you much more tuning
-    @command(name='cool_command_name')
-    @arg('baz', '-z', required=True, type=int)
-    def lame_command_name(foo, bar, baz=1):
-        print 'lame_command_name', foo, bar, baz
-
-    if __name__ == '__main__':
-        main()
+    main()
 
 
 Need some help?::
 
     $ python example.py --help
-    usage: example.py [-h] [-v] {foo,cool_command_name} ...
+    usage: example.py [-h] [-v] {foo,cool_command} ...
 
     positional arguments:
-      {foo,cool_command_name}
+      {foo,cool_command}
 
     optional arguments:
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
 
-Let's investigate more about `foo`::
+Let's investigate more about ``foo``::
 
     $ python example.py foo --help
     usage: example.py foo [-h] --baz BAZ bar
@@ -57,7 +45,7 @@ Let's investigate more about `foo`::
       -h, --help  show this help message and exit
       --baz BAZ
 
-Test `foo` command::
+Test ``foo`` command::
 
     $ python example.py foo Hello
     usage: example.py foo [-h] --baz BAZ bar
@@ -68,18 +56,27 @@ That's ok now::
     $ python example.py foo Hello --baz World
     foo Hello World
 
-Cool, eh?
+Cool, eh? What if you need more control over?::
 
-This also shows how flexible and configurable it is::
+    from komandr import *
+    
+    @command('cool_command')
+    @arg('baz', '-z', required=True, type=int)
+    def lame_command(foo, bar, baz=1):
+        print 'lame_command', foo, bar, baz
 
-    $ python example.py cool_command_name Hello -z 'Non numeric' World
-    usage: example.py cool_command_name [-h] --baz BAZ foo bar
-    example.py cool_command_name: error: argument --baz/-z: invalid int value: 'Non Numeric'
+    main()
+
+Let's try it::
+
+    $ python example.py cool_command Hello -z 'wtf' World
+    usage: example.py cool_command [-h] --baz BAZ foo bar
+    example.py cool_command: error: argument --baz/-z: invalid int value: 'wtf'
 
 Correct one should be::
 
-    $ python example.py cool_command_name Hello -z 2013 World
-    lame_command_name Hello World 2013
+    $ python example.py cool_command Hello -z 2013 World
+    lame_command Hello World 2013
 
 Enjoy!
 
