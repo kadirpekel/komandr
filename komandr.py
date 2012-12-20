@@ -57,14 +57,21 @@ class prog(object):
             return func
         return wrapper
 
-    def _generate_command(self, func, name=None):
+    def _generate_command(self, func, name=None, **kwargs):
         """Generates a command parser for given func.
 
         :param func: func to generate related command parser
         :param type: function
 
+        :param name: command name
+        :param type: str
+
+        :param **kwargs: keyword arguments those passed through to
+                         :py:class:``argparse.ArgumentParser.add_parser``
+        :param type: dict
+
         """
-        subparser = self.subparsers.add_parser(name or func.__name__)
+        subparser = self.subparsers.add_parser(name or func.__name__, **kwargs)
         spec = inspect.getargspec(func)
         opts = reversed(list(izip_longest(reversed(spec.args or []),
                                           reversed(spec.defaults or []),
