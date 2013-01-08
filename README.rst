@@ -10,7 +10,8 @@ all the flexibity.
 
 Example
 -------
-::
+
+.. code-block:: python
 
     from komandr import *
 
@@ -21,7 +22,9 @@ Example
     main()
 
 
-Need some help?::
+Need some help?
+
+.. code-block:: console
 
     $ python example.py --help
     usage: example.py [-h] [-v] {foo,cool_command} ...
@@ -33,7 +36,9 @@ Need some help?::
       -h, --help            show this help message and exit
       -v, --version         show program's version number and exit
 
-Let's investigate more about ``foo``::
+Let's investigate more about ``foo``
+
+.. code-block:: console
 
     $ python example.py foo --help
     usage: example.py foo [-h] --baz BAZ bar
@@ -45,21 +50,27 @@ Let's investigate more about ``foo``::
       -h, --help  show this help message and exit
       --baz BAZ
 
-Test ``foo`` command::
+Test ``foo`` command
+
+.. code-block:: console
 
     $ python example.py foo Hello
     usage: example.py foo [-h] --baz BAZ bar
     example.py foo: error: argument --baz is required
 
-That's ok now::
+That's ok now
+
+.. code-block:: console
 
     $ python example.py foo Hello --baz World
     foo Hello World
 
-Cool, eh? What if you need more control over?::
+Cool, eh? What if you need more control over?
+
+.. code-block:: python
 
     from komandr import *
-    
+
     @command('cool_command')
     @arg('baz', '-z', required=True, type=int)
     def lame_command(foo, bar, baz=1):
@@ -67,13 +78,17 @@ Cool, eh? What if you need more control over?::
 
     main()
 
-Let's try it::
+Let's try it
+
+.. code-block:: console
 
     $ python example.py cool_command Hello -z 'wtf' World
     usage: example.py cool_command [-h] --baz BAZ foo bar
     example.py cool_command: error: argument --baz/-z: invalid int value: 'wtf'
 
-Correct one should be::
+Correct one should be
+
+.. code-block:: console
 
     $ python example.py cool_command Hello -z 2013 World
     lame_command Hello World 2013
