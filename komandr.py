@@ -114,6 +114,8 @@ class prog(object):
         """Calls :py:func:``execute`` with :py:class:``sys.argv`` excluding
         script name which comes first.
 
+        :param default: function called when no subcommand
+        :param type: function
         """
         self.default = default
         self.execute(sys.argv[1:])
