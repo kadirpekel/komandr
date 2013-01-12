@@ -102,15 +102,20 @@ class prog(object):
         :param type: list
 
         """
+        default = getattr(self, 'default', None)
+        if not arg_list and default and callable(default):
+            return default()
+
         arg_map = self.parser.parse_args(arg_list).__dict__
         command = arg_map.pop(self._COMMAND_FLAG)
         return command(**arg_map)
 
-    def __call__(self):
+    def __call__(self, default=None):
         """Calls :py:func:``execute`` with :py:class:``sys.argv`` excluding
         script name which comes first.
 
         """
+        self.default = default
         self.execute(sys.argv[1:])
 
 main = prog()
