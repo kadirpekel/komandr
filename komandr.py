@@ -102,22 +102,23 @@ class prog(object):
         :param type: list
 
         """
-        default = getattr(self, 'default', None)
-        if not arg_list and default and callable(default):
-            return default()
+        if getattr(self, 'default_subcommand', None):
+            subcommand = arg_list[0] if arg_list else ''
+            if not (subcommand and subcommand in self.subparsers.choices):
+                arg_list[:0] = [self.default_subcommand]
 
         arg_map = self.parser.parse_args(arg_list).__dict__
         command = arg_map.pop(self._COMMAND_FLAG)
         return command(**arg_map)
 
-    def __call__(self, default=None):
+    def __call__(self, default_subcommand=None):
         """Calls :py:func:``execute`` with :py:class:``sys.argv`` excluding
         script name which comes first.
 
-        :param default: function called when no subcommand
-        :param type: function
+        :param default: name of subcommand called if no subcommand specified.
+        :param type: str
         """
-        self.default = default
+        self.default_subcommand = default_subcommand
         self.execute(sys.argv[1:])
 
 main = prog()
