@@ -1,9 +1,13 @@
 # TODO: Add much more tests
 import unittest
 import komandr
+from mock import patch
 
 
 class TestKomandr(unittest.TestCase):
+
+    def tearDown(self):
+        komandr.main.default_subcommand = None
 
     def testCommand(self):
         def foo(bar, baz=None):
@@ -37,6 +41,20 @@ class TestKomandr(unittest.TestCase):
         komandr.main.default_subcommand = 'foo'
         self.assertEqual('bar', komandr.execute([]))
 
+    def testOptionsNotTriggerDefaultSubcommand(self):
+        def foo(baz='bar'):
+            return baz
+        komandr.command(foo)
+
+        komandr.main.default_subcommand = 'foo'
+        with patch.object(komandr.main.parser, 'print_help') as mock:
+            with self.assertRaises(SystemExit) as ex:
+                komandr.execute(['--help'])
+
+        self.assertEqual(0, ex.exception.code)
+        self.assertTrue(mock.called)
+
+        self.assertEqual('bar baz', komandr.execute(['--baz', 'bar baz']))
 
 if __name__ == '__main__':
     unittest.main()

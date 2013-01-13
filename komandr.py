@@ -7,7 +7,7 @@ import sys
 import inspect
 import argparse
 from functools import wraps
-from itertools import izip_longest
+from itertools import izip_longest, chain
 
 
 class prog(object):
@@ -104,7 +104,11 @@ class prog(object):
         """
         if getattr(self, 'default_subcommand', None):
             subcommand = arg_list[0] if arg_list else ''
-            if not (subcommand and subcommand in self.subparsers.choices):
+            action_option_strings = chain.from_iterable(i.option_strings
+                    for i in self.parser._actions)
+            if not (subcommand
+                    and subcommand in self.subparsers.choices
+                    or subcommand in action_option_strings):
                 arg_list[:0] = [self.default_subcommand]
 
         arg_map = self.parser.parse_args(arg_list).__dict__
