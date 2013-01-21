@@ -93,6 +93,11 @@ Correct one should be
     $ python example.py cool_command Hello -z 2013 World
     lame_command Hello World 2013
 
+Showcase
+--------
+
+Want to see something real, Checkout Todo.py https://github.com/kadirpekel/todo.py
+
 Enjoy!
 
 Licence
