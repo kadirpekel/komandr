@@ -96,7 +96,7 @@ Correct one should be
 Showcase
 --------
 
-Want to see something real, Checkout Todo.py https://github.com/kadirpekel/todo.py
+Want to see something real, Checkout Dudu https://github.com/kadirpekel/dudu
 
 Enjoy!
 
