@@ -106,12 +106,15 @@ class prog(object):
         command = arg_map.pop(self._COMMAND_FLAG)
         return command(**arg_map)
 
-    def __call__(self):
+    def __call__(self, arg_list):
         """Calls :py:func:``execute`` with :py:class:``sys.argv`` excluding
         script name which comes first.
 
         """
-        self.execute(sys.argv[1:])
+        if arg_list is not None:  # Can be an empty list
+            return self.execute(arg_list)
+        else:
+            return self.execute(sys.argv[1:])
 
 main = prog()
 arg = main.arg
