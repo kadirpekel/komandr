@@ -82,6 +82,10 @@ class prog(object):
             args = list(args)
             is_positional = isinstance(v, self._POSITIONAL)
             options = [arg for arg in args if arg.startswith('-')]
+            if isinstance(v, list):
+                kwargs.update({
+                    'action': 'append',
+                })
             if is_positional:
                 if options:
                     args = options
