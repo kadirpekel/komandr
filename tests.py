@@ -18,7 +18,7 @@ class TestKomandr(unittest.TestCase):
             return c
         komandr.command(bar)
 
-        self.assertEqual(['blue', 'red',], komandr.execute(['bar', '--c', 'blue', '--c', 'red']))
+        self.assertEqual(['blue', 'red', ], komandr.execute(['bar', '--c', 'blue', '--c', 'red']))
 
 
 if __name__ == '__main__':
