@@ -11,6 +11,7 @@ bin
 var
 sdist
 develop-eggs
+venv
 .installed.cfg
 
 # Installer logs

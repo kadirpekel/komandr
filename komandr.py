@@ -7,7 +7,11 @@ import sys
 import inspect
 import argparse
 from functools import wraps
-from itertools import izip_longest
+
+try:
+  from itertools import izip_longest
+except ImportError: # for python3
+  from itertools import zip_longest as izip_longest
 
 
 class prog(object):
@@ -16,7 +20,7 @@ class prog(object):
     _COMMAND_FLAG = '_command'
     _POSITIONAL = type('_positional', (object,), {})
 
-    def __init__(self, version='0.0.1', **kwargs):
+    def __init__(self, version='1.0.2', **kwargs):
         """Constructor
 
         :param version: program version
@@ -102,6 +106,9 @@ class prog(object):
         :param type: list
 
         """
+        if not arg_list:
+            arg_list = ['--help']
+
         arg_map = self.parser.parse_args(arg_list).__dict__
         command = arg_map.pop(self._COMMAND_FLAG)
         return command(**arg_map)
