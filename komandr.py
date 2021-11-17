@@ -6,12 +6,11 @@ command-line interfaces using :py:module:``argparse`` in backyard.
 import sys
 import inspect
 import argparse
-from functools import wraps
 
 try:
-  from itertools import izip_longest
-except ImportError: # for python3
-  from itertools import zip_longest as izip_longest
+    from itertools import izip_longest
+except ImportError:  # for python3
+    from itertools import zip_longest as izip_longest
 
 
 class prog(object):
@@ -20,7 +19,7 @@ class prog(object):
     _COMMAND_FLAG = '_command'
     _POSITIONAL = type('_positional', (object,), {})
 
-    def __init__(self, version='1.0.2', **kwargs):
+    def __init__(self, version='1.0.4', **kwargs):
         """Constructor
 
         :param version: program version
@@ -80,7 +79,16 @@ class prog(object):
         opts = reversed(list(izip_longest(reversed(spec.args or []),
                                           reversed(spec.defaults or []),
                                           fillvalue=self._POSITIONAL())))
+
+        # Check whether this function is a bound class method
+        is_self_bound = getattr(func, '__self__', None)
+
         for k, v in opts:
+
+            # Skip the parameter `self` if we are self bound
+            if is_self_bound and k == 'self':
+                continue
+
             argopts = getattr(func, 'argopts', {})
             args, kwargs = argopts.get(k, ([], {}))
             args = list(args)
@@ -95,7 +103,7 @@ class prog(object):
             else:
                 args = options or ['--%s' % k]
                 kwargs.update({'default': v, 'dest': k})
-            arg = subparser.add_argument(*args, **kwargs)
+            subparser.add_argument(*args, **kwargs)
         subparser.set_defaults(**{self._COMMAND_FLAG: func})
         return func
 
@@ -119,6 +127,7 @@ class prog(object):
 
         """
         self.execute(sys.argv[1:])
+
 
 main = prog()
 arg = main.arg
