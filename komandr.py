@@ -7,19 +7,13 @@ import sys
 import inspect
 import argparse
 
-try:
-    from itertools import izip_longest
-except ImportError:  # for python3
-    from itertools import zip_longest as izip_longest
-
 
 class prog(object):
     """Class to hold an isolated command namespace"""
 
     _COMMAND_FLAG = '_command'
-    _POSITIONAL = type('_positional', (object,), {})
 
-    def __init__(self, version='1.0.4', **kwargs):
+    def __init__(self, version='2.0.1', **kwargs):
         """Constructor
 
         :param version: program version
@@ -60,6 +54,15 @@ class prog(object):
             return func
         return wrapper
 
+    def _parse_docstring(self, func):
+        if not func.__doc__:
+            return
+        try:
+            from gdparser import parse
+        except ImportError:
+            return
+        return parse(func.__doc__, remove_indent=True)
+
     def _generate_command(self, func, name=None, **kwargs):
         """Generates a command parser for given func.
 
@@ -74,17 +77,19 @@ class prog(object):
         :param type: dict
 
         """
+
+        doc = self._parse_docstring(func)
+        if doc and not 'description' in kwargs:
+            kwargs['description'] = doc.get('description')
+
         subparser = self.subparsers.add_parser(name or func.__name__, **kwargs)
-        spec = inspect.getargspec(func)
-        opts = reversed(list(izip_longest(reversed(spec.args or []),
-                                          reversed(spec.defaults or []),
-                                          fillvalue=self._POSITIONAL())))
+        
+        sig = inspect.signature(func)
 
         # Check whether this function is a bound class method
         is_self_bound = getattr(func, '__self__', None)
 
-        for k, v in opts:
-
+        for k, v in sig.parameters.items():
             # Skip the parameter `self` if we are self bound
             if is_self_bound and k == 'self':
                 continue
@@ -92,9 +97,18 @@ class prog(object):
             argopts = getattr(func, 'argopts', {})
             args, kwargs = argopts.get(k, ([], {}))
             args = list(args)
-            is_positional = isinstance(v, self._POSITIONAL)
             options = [arg for arg in args if arg.startswith('-')]
-            if is_positional:
+
+            assert v.kind is v.POSITIONAL_OR_KEYWORD, \
+                'Variable length args are not supported.'
+
+            if doc:
+                params = doc.get('parameters', [])
+                for param in params:
+                    if param['name'] == k:
+                        kwargs['help'] = param.get('description')
+
+            if v.default is v.empty:
                 if options:
                     args = options
                     kwargs.update({'required': True, 'dest': k})
@@ -102,7 +116,22 @@ class prog(object):
                     args = [k]
             else:
                 args = options or ['--%s' % k]
-                kwargs.update({'default': v, 'dest': k})
+                kwargs.update({'default': v.default, 'dest': k})
+
+
+            if v.annotation is not v.empty:
+                kwargs['type'] = v.annotation
+
+            # If type is bool, do some special treatment
+            if v.annotation == bool:
+                kwargs['action'] = 'store_true'
+
+            # If type is list, assume all contained types as str
+            if v.annotation == list:
+                kwargs['type'] = str
+                kwargs['action'] = 'extend'
+                kwargs['nargs'] = '+'
+
             subparser.add_argument(*args, **kwargs)
         subparser.set_defaults(**{self._COMMAND_FLAG: func})
         return func
